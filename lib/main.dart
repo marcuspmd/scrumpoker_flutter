@@ -1,7 +1,6 @@
 import 'package:asp/asp.dart';
 import 'package:asuka/asuka.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:scrumpoker_flutter/atoms/core_atom.dart';
 import 'package:scrumpoker_flutter/modules/app_module.dart';
@@ -9,7 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_strategy/url_strategy.dart';
 
 Future<void> main() async {
-  await dotenv.load(fileName: '.env');
+  WidgetsFlutterBinding.ensureInitialized();
+  // await dotenv.load(fileName: '.env');
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   setPathUrlStrategy();
   runApp(ModularApp(

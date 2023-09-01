@@ -6,7 +6,9 @@ class JoinRoomUsecase {
 
   JoinRoomUsecase(this._roomRepository);
 
-  Future<RoomEntity> execute(String? roomId) async {
-    return _roomRepository.joinRoom(roomId);
+  Future<(bool, RoomEntity)> execute(String? roomId) async {
+    RoomEntity room = await _roomRepository.joinRoom(roomId);
+
+    return (room.id.isNotEmpty, room);
   }
 }

@@ -15,4 +15,14 @@ class CacheImpl implements Cache {
   Future<bool> setBool(String key, bool value) async {
     return prefs.setBool(key, value);
   }
+
+  @override
+  String getString(String key) {
+    return prefs.getString(key) ?? '';
+  }
+
+  @override
+  Future<bool> setString(String key, String value) async {
+    return prefs.setString(key, value);
+  }
 }

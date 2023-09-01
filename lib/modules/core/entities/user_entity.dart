@@ -15,6 +15,14 @@ class UserEntity {
     required this.isSpectator,
   });
 
+  static UserEntity get empty => UserEntity(
+        id: '',
+        vote: null,
+        isVoted: false,
+        isAdmin: false,
+        isSpectator: false,
+      );
+
   UserEntity copyWith({
     String? id,
     String? vote,
