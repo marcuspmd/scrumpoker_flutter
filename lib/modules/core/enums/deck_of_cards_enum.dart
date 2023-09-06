@@ -59,7 +59,7 @@ extension DeckOfCardsEnumExtension on DeckOfCardsEnum {
       CardEntity(label: '10', value: 10, selected: false),
       CardEntity(
           label: 'Coffee', value: -1, selected: false, icon: Icons.coffee),
-    ],
+    ]
   };
 
   String get label => names[this] ?? '';

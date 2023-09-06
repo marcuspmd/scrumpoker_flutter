@@ -5,20 +5,20 @@ import 'package:scrumpoker_flutter/modules/core/enums/deck_of_cards_enum.dart';
 
 class ActionHeaderComponent {
   static List<Widget> build(BuildContext context) {
-    context.select(() => [darkMode.value, deckOfCards.value]);
+    context.select(() => [darkModeState.value, deckOfCardsState.value]);
     return [
       IconButton(
         onPressed: () {
           changeSchema();
         },
-        icon: darkMode.value
+        icon: darkModeState.value
             ? const Icon(Icons.light_mode)
             : const Icon(Icons.dark_mode),
       ),
       PopupMenuButton(
           child: Row(
             children: [
-              Text(deckOfCards.value.label),
+              Text(deckOfCardsState.value.label),
               const Icon(Icons.arrow_drop_down)
             ],
           ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:scrumpoker_flutter/atoms/core_atom.dart';
 import 'package:scrumpoker_flutter/modules/core/presenter/components/action_header_component.dart';
 
@@ -53,16 +52,15 @@ class HomePage extends StatelessWidget {
                                 if (value.isEmpty) {
                                   return;
                                 }
-                                joinRoom.value = value;
-                                Modular.to.pushNamed('/room');
+                                joinRoomAction.value = value;
                               },
                               decoration: InputDecoration(
                                 filled: true,
                                 suffixIcon: IconButton(
                                   icon: const Icon(Icons.send),
                                   onPressed: () {
-                                    joinRoom.value = roomIdController.text;
-                                    Modular.to.pushNamed('/room');
+                                    joinRoomAction.value =
+                                        roomIdController.text;
                                   },
                                 ),
                                 border: const OutlineInputBorder(),
@@ -81,8 +79,7 @@ class HomePage extends StatelessWidget {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          joinRoom.value = null;
-                          Modular.to.pushNamed('/room');
+                          joinRoomAction.value = null;
                         },
                         child: const Text('Create a room'),
                       ),

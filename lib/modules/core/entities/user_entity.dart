@@ -39,7 +39,7 @@ class UserEntity {
     );
   }
 
-  UserEntity fromMap(Map<String, dynamic> map) {
+  static UserEntity fromMap(Map<String, dynamic> map) {
     const dson = DSON();
     return dson.fromJson(map, UserEntity.new);
   }

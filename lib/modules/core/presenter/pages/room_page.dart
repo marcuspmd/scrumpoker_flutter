@@ -13,15 +13,16 @@ class RoomPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.select(() => [room.value, deckOfCards.value, selectedCard.value]);
-    List<CardEntity> deck = deckOfCards.value.deck;
+    context.select(() =>
+        [roomState.value, deckOfCardsState.value, selectedCardState.value]);
+    List<CardEntity> deck = deckOfCardsState.value.deck;
     List<UserEntity> users =
-        room.value.users.where((e) => e.isSpectator == false).toList();
+        roomState.value.users.where((e) => e.isSpectator == false).toList();
     double width = MediaQuery.of(context).size.width;
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-            title: Text('Scrum Poker ${room.value.id}'),
+            title: Text('Scrum Poker ${roomState.value.id}'),
             actions: ActionHeaderComponent.build(context)),
         body: SafeArea(
           child: SingleChildScrollView(
@@ -41,12 +42,14 @@ class RoomPage extends StatelessWidget {
                         shape: BeveledRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                           side: BorderSide(
-                            color: darkMode.value ? Colors.white : Colors.black,
+                            color: darkModeState.value
+                                ? Colors.white
+                                : Colors.black,
                             width: 0.3,
                           ),
                         ),
                         shadowColor: Colors.black,
-                        color: deck[index] == selectedCard.value
+                        color: deck[index] == selectedCardState.value
                             ? Colors.grey[500]
                             : null,
                         child: InkWell(

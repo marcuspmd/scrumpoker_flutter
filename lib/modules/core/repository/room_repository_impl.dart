@@ -1,13 +1,19 @@
 import 'package:scrumpoker_flutter/modules/core/entities/room_entity.dart';
-import 'package:scrumpoker_flutter/modules/core/entities/user_entity.dart';
+import 'package:scrumpoker_flutter/modules/core/protocols/adapters/i_socket.dart';
 import 'package:scrumpoker_flutter/modules/core/protocols/repository/room_repository.dart';
 
 class RoomRepositoryImpl implements RoomRepository {
+  final ISocket _socket;
+
+  RoomRepositoryImpl(this._socket);
+
   @override
-  Future<RoomEntity> joinRoom(String? roomId) async {
+  RoomEntity? joinRoom(String? roomId) {
     if (roomId == null) {
-      return await _createRoom();
+      newRoom();
+      return null;
     }
+    _socket.joinRoom(roomId);
 
     RoomEntity room = RoomEntity.empty;
     room = room.copyWith(id: roomId);
@@ -15,28 +21,17 @@ class RoomRepositoryImpl implements RoomRepository {
   }
 
   @override
-  Future<void> changeDeckOfCards(String deckOfCards) async {
+  void changeDeckOfCards(String deckOfCards) {
     print(deckOfCards);
   }
 
-  Future<RoomEntity> _createRoom() async {
-    UserEntity myUser =
-        UserEntity(id: '2', isVoted: false, isAdmin: true, isSpectator: false);
-    return Future.value(RoomEntity(
-        id: 'Play',
-        myUser: myUser,
-        users: [
-          UserEntity(id: '1', isVoted: false, isAdmin: true, isSpectator: true),
-          myUser,
-          UserEntity(
-              id: '3', isVoted: false, isAdmin: true, isSpectator: false),
-          UserEntity(
-              id: '4', isVoted: false, isAdmin: true, isSpectator: false),
-          UserEntity(
-              id: '5', isVoted: false, isAdmin: true, isSpectator: false),
-        ],
-        average: null,
-        isOwner: true,
-        isVoting: false));
+  @override
+  void newRoom() {
+    _socket.newRoom();
+  }
+
+  @override
+  vote(String? vote) {
+    _socket.vote(vote);
   }
 }

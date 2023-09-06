@@ -5,17 +5,22 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:scrumpoker_flutter/atoms/core_atom.dart';
 import 'package:scrumpoker_flutter/modules/app_module.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_strategy/url_strategy.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // await dotenv.load(fileName: '.env');
   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  setPathUrlStrategy();
+  String url = 'ws://api.scrumpoker.marcusp.com.br:80/';
+  // url = 'http://localhost:3001/';
+  IO.Socket socket = IO.io(url, <String, dynamic>{
+    'transports': ['websocket'],
+    'autoConnect': true,
+  });
+  socket.connect();
+
   runApp(ModularApp(
-    module: AppModule(
-      prefs: prefs,
-    ),
+    module: AppModule(prefs: prefs, socket: socket),
     child: const RxRoot(
       child: MainApp(),
     ),
@@ -27,11 +32,11 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.select(() => darkMode.value);
+    context.select(() => darkModeState.value);
 
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      theme: darkMode.value ? ThemeData.dark() : ThemeData.light(),
+      theme: darkModeState.value ? ThemeData.dark() : ThemeData.light(),
       title: 'Scrum Poker',
       routerConfig: Modular.routerConfig,
       builder: Asuka.builder,
