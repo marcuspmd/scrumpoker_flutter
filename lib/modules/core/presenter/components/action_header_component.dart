@@ -22,7 +22,7 @@ class ActionHeaderComponent {
             const Icon(Icons.arrow_drop_down)
           ],
         ),
-        onSelected: (value) => changeDeckOfCards.value = value,
+        onSelected: (value) => changeDeckOfCardsAction.value = value,
         itemBuilder: (_) {
           return DeckOfCardsEnum.values
               .map((e) => PopupMenuItem(

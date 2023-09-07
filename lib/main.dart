@@ -6,13 +6,15 @@ import 'package:scrumpoker_flutter/atoms/core_atom.dart';
 import 'package:scrumpoker_flutter/modules/app_module.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:url_strategy/url_strategy.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // await dotenv.load(fileName: '.env');
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   String url = 'ws://api.scrumpoker.marcusp.com.br:80/';
-  // url = 'http://localhost:3001/';
+  setPathUrlStrategy();
+  url = 'http://localhost:3001/';
   IO.Socket socket = IO.io(url, <String, dynamic>{
     'transports': ['websocket'],
     'autoConnect': true,

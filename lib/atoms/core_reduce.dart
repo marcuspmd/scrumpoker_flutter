@@ -1,5 +1,4 @@
 import 'package:asp/asp.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:scrumpoker_flutter/atoms/core_atom.dart';
 import 'package:scrumpoker_flutter/modules/core/entities/average_entity.dart';
 import 'package:scrumpoker_flutter/modules/core/entities/card_entity.dart';
@@ -18,7 +17,7 @@ class CoreReduce extends Reducer {
     _initialize();
     on(() => [joinRoomAction], _joinRoom);
     on(() => [changeSchema], _changeSchema);
-    on(() => [changeDeckOfCards], _changeDeckOfCards);
+    on(() => [changeDeckOfCardsAction], _changeDeckOfCards);
     on(() => [selectCard], _selectCard);
     on(() => [updateUsers], _updateUsers);
     on(() => [userVoted], _userVoted);
@@ -47,16 +46,10 @@ class CoreReduce extends Reducer {
     selectCard.value = null;
 
     if (joinRoomAction.value != null) {
-      RoomEntity? room = roomRepository.emitJoinRoom(joinRoomAction.value);
-      if (room != null) {
-        roomState.value = room;
-        await Modular.to.pushNamed('/room/');
-        roomRepository.connect();
-      }
-
-      return;
+      roomRepository.connect();
+      RoomEntity room = roomRepository.emitJoinRoom(joinRoomAction.value!);
+      roomState.value = room;
     }
-    roomRepository.emitNewRoom();
   }
 
   _changeSchema() {
@@ -65,11 +58,11 @@ class CoreReduce extends Reducer {
   }
 
   _changeDeckOfCards() {
-    bool isOtherDeck = deckOfCardsState.value != changeDeckOfCards.value;
+    bool isOtherDeck = deckOfCardsState.value != changeDeckOfCardsAction.value;
     if (isOtherDeck) {
-      selectCard.value = null;
-      _updateUserVote(null, false);
-      deckOfCardsState.value = changeDeckOfCards.value;
+      clearAllAction();
+      prefs.setString('deckOfCards', changeDeckOfCardsAction.value.label);
+      deckOfCardsState.value = changeDeckOfCardsAction.value;
       roomRepository.emitChangeDeckOfCards(deckOfCardsState.value.label);
     }
   }

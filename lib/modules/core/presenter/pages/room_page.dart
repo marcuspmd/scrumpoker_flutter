@@ -7,9 +7,14 @@ import 'package:scrumpoker_flutter/modules/core/enums/deck_of_cards_enum.dart';
 import 'package:scrumpoker_flutter/modules/core/presenter/components/action_header_component.dart';
 
 class RoomPage extends StatelessWidget {
-  const RoomPage({
+  final String roomId;
+
+  RoomPage({
     super.key,
-  });
+    required this.roomId,
+  }) {
+    joinRoomAction.value = roomId;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +22,7 @@ class RoomPage extends StatelessWidget {
           loadingState.value,
           roomState.value,
           deckOfCardsState.value,
-          selectedCardState.value,
+          selectedCardState.value
         ]);
     List<CardEntity> deck = deckOfCardsState.value.deck;
     List<UserEntity> users =

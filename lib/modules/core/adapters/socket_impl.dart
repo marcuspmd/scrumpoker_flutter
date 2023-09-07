@@ -1,4 +1,5 @@
 import 'package:scrumpoker_flutter/atoms/core_atom.dart';
+import 'package:scrumpoker_flutter/modules/core/enums/deck_of_cards_enum.dart';
 import 'package:scrumpoker_flutter/modules/core/protocols/adapters/i_socket.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
@@ -54,10 +55,18 @@ class SocketImpl implements ISocket {
       updateSd.value = data;
       print('sd $data');
     });
+
+    socket.on('changeDeckOfCards', (data) {
+      DeckOfCardsEnum? deck =
+          DeckOfCardsEnum.values.firstWhere((element) => element.label == data);
+
+      changeDeckOfCardsAction.value = deck;
+    });
   }
 
   @override
-  void joinRoom(String roomId) {
+  void joinRoom(String roomId) async {
+    await connect();
     socket.emit('joinRoom', {'room': roomId});
   }
 
@@ -73,7 +82,7 @@ class SocketImpl implements ISocket {
 
   @override
   void changeDeckOfCards(String deckOfCards) {
-    socket.emit('changeDeckOfCards', {'deckOfCards': deckOfCards});
+    socket.emit('changeDeckOfCards', deckOfCards);
   }
 
   @override
@@ -92,12 +101,12 @@ class SocketImpl implements ISocket {
   }
 
   @override
-  void connect() async {
-    loadingState.value = true;
+  Future<void> connect() async {
     if (socket.id != null) {
       socket.disconnect();
     }
     socket.connect();
+
     while (!socket.connected) {
       await Future.delayed(const Duration(milliseconds: 100));
     }

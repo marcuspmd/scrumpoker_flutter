@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:asp/asp.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:scrumpoker_flutter/atoms/core_atom.dart';
 import 'package:scrumpoker_flutter/modules/core/presenter/components/action_header_component.dart';
 
@@ -58,15 +61,17 @@ class HomePage extends StatelessWidget {
                                       if (value.isEmpty) {
                                         return;
                                       }
-                                      joinRoomAction.value = value;
+                                      loadingState.value = true;
+                                      Modular.to.pushNamed('/room/$value');
                                     },
                                     decoration: InputDecoration(
                                       filled: true,
                                       suffixIcon: IconButton(
                                         icon: const Icon(Icons.send),
                                         onPressed: () {
-                                          joinRoomAction.value =
-                                              roomIdController.text;
+                                          loadingState.value = true;
+                                          Modular.to.pushNamed(
+                                              '/room/${roomIdController.text}');
                                         },
                                       ),
                                       border: const OutlineInputBorder(),
@@ -85,7 +90,9 @@ class HomePage extends StatelessWidget {
                             ),
                             ElevatedButton(
                               onPressed: () {
-                                joinRoomAction.value = null;
+                                loadingState.value = true;
+                                Modular.to
+                                    .pushNamed('/room/${_getRandomRoom()}');
                               },
                               child: const Text('Create a room'),
                             ),
@@ -96,5 +103,12 @@ class HomePage extends StatelessWidget {
                   ]),
             ),
     ));
+  }
+
+  String _getRandomRoom() {
+    var r = Random();
+    const chars =
+        'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+    return List.generate(5, (index) => chars[r.nextInt(chars.length)]).join();
   }
 }

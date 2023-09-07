@@ -37,6 +37,9 @@ class AppModule extends Module {
       '/',
       child: (_) => const HomePage(),
     );
-    r.child('/room/', child: (_) => const RoomPage());
+    r.child('/room/:roomId',
+        child: (_) => RoomPage(
+              roomId: r.args.params['roomId'] as String,
+            ));
   }
 }
