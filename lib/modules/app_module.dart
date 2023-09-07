@@ -23,7 +23,9 @@ class AppModule extends Module {
   @override
   void binds(i) {
     i.addInstance(prefs);
-    i.addInstance<ISocket>(SocketImpl(socket));
+    i.addInstance<ISocket>(SocketImpl(
+      socket: socket,
+    ));
     i.addLazySingleton<Cache>(CacheImpl.new);
     i.addSingleton<RoomRepository>(RoomRepositoryImpl.new);
     i.addSingleton(CoreReduce.new);

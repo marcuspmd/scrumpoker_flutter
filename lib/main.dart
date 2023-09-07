@@ -17,7 +17,6 @@ Future<void> main() async {
     'transports': ['websocket'],
     'autoConnect': true,
   });
-  socket.connect();
 
   runApp(ModularApp(
     module: AppModule(prefs: prefs, socket: socket),

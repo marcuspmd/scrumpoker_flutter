@@ -5,17 +5,19 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 class SocketImpl implements ISocket {
   final IO.Socket socket;
 
-  SocketImpl(this.socket) {
-    socket.onDisconnect((_) => print('disconnect'));
+  SocketImpl({required this.socket}) {
+    connect();
     socket.on('newRoom', (data) {
       joinRoomAction.value = data;
     });
 
     socket.on('userJoined', (data) {
+      addUserAction.value = data;
       print('user $data');
     });
 
     socket.on('userLeft', (data) {
+      removeUserAction.value = data;
       print('userLeft $data');
     });
 
@@ -39,23 +41,18 @@ class SocketImpl implements ISocket {
     });
 
     socket.on('showVotes', (data) {
+      updateUsers.value = data;
       print('showVotes $data');
     });
 
     socket.on('isSpectator', (data) {
+      updateSpectator.value = data;
       print('isSpectator $data');
     });
 
     socket.on('sd', (data) {
+      updateSd.value = data;
       print('sd $data');
-    });
-
-    socket.on('listAllRooms', (data) {
-      print('listAllRooms $data');
-    });
-
-    socket.onConnect((_) {
-      print('Connection established');
     });
   }
 
@@ -67,11 +64,6 @@ class SocketImpl implements ISocket {
   @override
   void newRoom() {
     socket.emit('newRoom');
-  }
-
-  @override
-  void listAllRooms() {
-    socket.emit('listAllRooms');
   }
 
   @override
@@ -97,5 +89,18 @@ class SocketImpl implements ISocket {
   @override
   void clear() {
     socket.emit('clear');
+  }
+
+  @override
+  void connect() async {
+    loadingState.value = true;
+    if (socket.id != null) {
+      socket.disconnect();
+    }
+    socket.connect();
+    while (!socket.connected) {
+      await Future.delayed(const Duration(milliseconds: 100));
+    }
+    loadingState.value = false;
   }
 }

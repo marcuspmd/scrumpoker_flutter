@@ -16,25 +16,22 @@ class ActionHeaderComponent {
             : const Icon(Icons.dark_mode),
       ),
       PopupMenuButton(
-          child: Row(
-            children: [
-              Text(deckOfCardsState.value.label),
-              const Icon(Icons.arrow_drop_down)
-            ],
-          ),
-          onSelected: (value) => changeDeckOfCards.value = value,
-          itemBuilder: (_) {
-            return DeckOfCardsEnum.values
-                .map((e) => PopupMenuItem(
-                      value: e,
-                      child: Text(e.label),
-                    ))
-                .toList();
-          }),
-      IconButton(
-        icon: const Icon(Icons.menu),
-        onPressed: () {},
-      )
+        child: Row(
+          children: [
+            Text(deckOfCardsState.value.label),
+            const Icon(Icons.arrow_drop_down)
+          ],
+        ),
+        onSelected: (value) => changeDeckOfCards.value = value,
+        itemBuilder: (_) {
+          return DeckOfCardsEnum.values
+              .map((e) => PopupMenuItem(
+                    value: e,
+                    child: Text(e.label),
+                  ))
+              .toList();
+        },
+      ),
     ];
   }
 }

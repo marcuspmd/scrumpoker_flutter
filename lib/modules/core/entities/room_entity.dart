@@ -25,7 +25,7 @@ class RoomEntity {
         users: [],
         average: null,
         isOwner: false,
-        isVoting: false,
+        isVoting: true,
       );
 
   RoomEntity copyWith({
@@ -43,6 +43,17 @@ class RoomEntity {
       average: average ?? this.average,
       isOwner: isOwner ?? this.isOwner,
       isVoting: isVoting ?? this.isVoting,
+    );
+  }
+
+  RoomEntity clearAverage() {
+    return RoomEntity(
+      id: id,
+      myUser: myUser,
+      users: users,
+      average: null,
+      isOwner: isOwner,
+      isVoting: isVoting,
     );
   }
 

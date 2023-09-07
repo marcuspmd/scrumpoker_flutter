@@ -6,5 +6,5 @@ abstract interface class ISocket {
   void changeDeckOfCards(String deckOfCards);
   void newRoom();
   void vote(String? vote);
-  void listAllRooms();
+  void connect();
 }

@@ -19,8 +19,10 @@ class AverageEntity {
     );
   }
 
-  AverageEntity fromMap(Map<String, dynamic> map) {
+  static AverageEntity fromMap(Map<String, dynamic> map) {
     const dson = DSON();
+    map['average'] = map['average'].toDouble();
+    map['sd'] = map['sd'].toDouble();
     return dson.fromJson(map, AverageEntity.new);
   }
 }

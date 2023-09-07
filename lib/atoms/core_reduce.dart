@@ -1,6 +1,8 @@
 import 'package:asp/asp.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:scrumpoker_flutter/atoms/core_atom.dart';
+import 'package:scrumpoker_flutter/modules/core/entities/average_entity.dart';
+import 'package:scrumpoker_flutter/modules/core/entities/card_entity.dart';
 import 'package:scrumpoker_flutter/modules/core/entities/room_entity.dart';
 import 'package:scrumpoker_flutter/modules/core/entities/user_entity.dart';
 import 'package:scrumpoker_flutter/modules/core/enums/deck_of_cards_enum.dart';
@@ -10,6 +12,7 @@ import 'package:scrumpoker_flutter/modules/core/protocols/repository/room_reposi
 class CoreReduce extends Reducer {
   final Cache prefs;
   final RoomRepository roomRepository;
+  late CardEntity? lastSelectedCardState;
 
   CoreReduce({required this.prefs, required this.roomRepository}) {
     _initialize();
@@ -20,6 +23,13 @@ class CoreReduce extends Reducer {
     on(() => [updateUsers], _updateUsers);
     on(() => [userVoted], _userVoted);
     on(() => [clearAction], _clear);
+    on(() => [clearAllAction], _clearAll);
+    on(() => [removeUserAction], _removeUser);
+    on(() => [addUserAction], _addUser);
+    on(() => [updateSd], _updateSd);
+    on(() => [updateSpectator], _updateSpectator);
+    on(() => [updateImSpectator], _updateImSpectator);
+    on(() => [showVotes], _showVotes);
   }
 
   _initialize() async {
@@ -34,19 +44,19 @@ class CoreReduce extends Reducer {
   }
 
   _joinRoom() async {
-    loadingState.value = true;
-    selectedCardState.value = null;
+    selectCard.value = null;
 
     if (joinRoomAction.value != null) {
-      RoomEntity? room = roomRepository.joinRoom(joinRoomAction.value);
+      RoomEntity? room = roomRepository.emitJoinRoom(joinRoomAction.value);
       if (room != null) {
         roomState.value = room;
-        Modular.to.pushNamed('/room/');
+        await Modular.to.pushNamed('/room/');
+        roomRepository.connect();
       }
 
       return;
     }
-    roomRepository.newRoom();
+    roomRepository.emitNewRoom();
   }
 
   _changeSchema() {
@@ -57,19 +67,26 @@ class CoreReduce extends Reducer {
   _changeDeckOfCards() {
     bool isOtherDeck = deckOfCardsState.value != changeDeckOfCards.value;
     if (isOtherDeck) {
-      selectedCardState.value = null;
+      selectCard.value = null;
       _updateUserVote(null, false);
       deckOfCardsState.value = changeDeckOfCards.value;
-      roomRepository.changeDeckOfCards(deckOfCardsState.value.label);
+      roomRepository.emitChangeDeckOfCards(deckOfCardsState.value.label);
     }
   }
 
   _selectCard() {
+    if (selectCard.value == null) {
+      selectedCardState.value = null;
+      return;
+    }
+
     if (selectedCardState.value == selectCard.value) {
       selectCard.value = null;
     }
+
     _updateUserVote(
         selectCard.value?.value.toString(), selectCard.value != null);
+
     selectedCardState.value = selectCard.value;
   }
 
@@ -94,7 +111,7 @@ class CoreReduce extends Reducer {
   }
 
   _updateUserVote(String? vote, bool isVoted) {
-    roomRepository.vote(vote);
+    roomRepository.emitVote(vote);
     roomState.value = roomState.value.copyWith(
       users: roomState.value.users.map((e) {
         if (e.id == roomState.value.myUser.id) {
@@ -121,11 +138,81 @@ class CoreReduce extends Reducer {
   }
 
   void _clear() {
-    selectedCardState.value = null;
+    selectCard.value = null;
+    roomState.value = roomState.value
+        .copyWith(
+          average: roomState.value.average?.copyWith(average: null, sd: null),
+          isVoting: true,
+          users: roomState.value.users.map((e) {
+            return e.copyWith(isVoted: false, vote: null);
+          }).toList(),
+        )
+        .clearAverage();
+  }
+
+  void _clearAll() {
+    roomRepository.emitClear();
+    _clear();
+  }
+
+  void _removeUser() {
+    String? userId = removeUserAction.value;
+    if (userId == null) {
+      return;
+    }
+    roomState.value = roomState.value.copyWith(
+      users: roomState.value.users.where((e) => e.id != userId).toList(),
+    );
+  }
+
+  void _addUser() {
+    Map<String, dynamic>? userMap = addUserAction.value;
+    if (userMap == null) {
+      return;
+    }
+    UserEntity user = UserEntity.fromMap(userMap);
+    roomState.value = roomState.value.copyWith(
+      users: roomState.value.users..add(user),
+    );
+  }
+
+  void _updateSd() {
+    Map<String, dynamic>? sdMap = updateSd.value;
+    if (sdMap == null) {
+      return;
+    }
+    AverageEntity average = AverageEntity.fromMap(sdMap);
+    roomState.value =
+        roomState.value.copyWith(average: average, isVoting: false);
+  }
+
+  void _updateSpectator() {
+    Map<String, dynamic>? spectatorMap = updateSpectator.value;
+    if (spectatorMap == null) {
+      return;
+    }
+    UserEntity spectator = UserEntity.fromMap(spectatorMap);
     roomState.value = roomState.value.copyWith(
       users: roomState.value.users.map((e) {
-        return e.copyWith(isVoted: false, vote: null);
+        if (e.id == spectator.id) {
+          return e.copyWith(
+              isSpectator: spectator.isSpectator, isVoted: spectator.isVoted);
+        }
+        return e;
       }).toList(),
     );
+  }
+
+  void _updateImSpectator() {
+    bool isSpectator = updateImSpectator.value;
+    roomState.value = roomState.value.copyWith(
+      myUser: roomState.value.myUser.copyWith(isSpectator: isSpectator),
+    );
+    selectCard.value = null;
+    roomRepository.emitIsSpectator();
+  }
+
+  void _showVotes() {
+    roomRepository.emitShowVotes();
   }
 }
