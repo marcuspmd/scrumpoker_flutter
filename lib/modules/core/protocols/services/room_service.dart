@@ -1,6 +1,6 @@
 import 'package:scrumpoker_flutter/modules/core/entities/room_entity.dart';
 
-abstract interface class RoomRepository {
+abstract interface class RoomService {
   void connect();
 
   void emitChangeDeckOfCards(String deckOfCards);

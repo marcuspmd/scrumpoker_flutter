@@ -1,6 +1,7 @@
 import 'package:asp/asp.dart';
 import 'package:asuka/asuka.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:scrumpoker_flutter/atoms/core_atom.dart';
 import 'package:scrumpoker_flutter/modules/app_module.dart';
@@ -10,12 +11,10 @@ import 'package:url_strategy/url_strategy.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await dotenv.load(fileName: '.env');
+  await dotenv.load(fileName: '.env');
   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  String url = 'ws://api.scrumpoker.marcusp.com.br:80/';
   setPathUrlStrategy();
-  url = 'http://localhost:3001/';
-  IO.Socket socket = IO.io(url, <String, dynamic>{
+  IO.Socket socket = IO.io(dotenv.env['SOCKET_URL'], <String, dynamic>{
     'transports': ['websocket'],
     'autoConnect': true,
   });

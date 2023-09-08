@@ -14,26 +14,21 @@ class SocketImpl implements ISocket {
 
     socket.on('userJoined', (data) {
       addUserAction.value = data;
-      print('user $data');
     });
 
     socket.on('userLeft', (data) {
       removeUserAction.value = data;
-      print('userLeft $data');
     });
 
     socket.on('voted', (data) {
       userVoted.value = data;
-      print('voted $data');
     });
 
     socket.on('clear', (data) {
       clearAction();
-      print('clear $data');
     });
 
     socket.on('roomDetail', (data) {
-      print('data $data');
       updateUsers.value = data;
     });
 
@@ -43,17 +38,14 @@ class SocketImpl implements ISocket {
 
     socket.on('showVotes', (data) {
       updateUsers.value = data;
-      print('showVotes $data');
     });
 
     socket.on('isSpectator', (data) {
       updateSpectator.value = data;
-      print('isSpectator $data');
     });
 
     socket.on('sd', (data) {
       updateSd.value = data;
-      print('sd $data');
     });
 
     socket.on('changeDeckOfCards', (data) {

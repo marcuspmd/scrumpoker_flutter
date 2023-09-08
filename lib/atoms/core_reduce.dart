@@ -6,14 +6,14 @@ import 'package:scrumpoker_flutter/modules/core/entities/room_entity.dart';
 import 'package:scrumpoker_flutter/modules/core/entities/user_entity.dart';
 import 'package:scrumpoker_flutter/modules/core/enums/deck_of_cards_enum.dart';
 import 'package:scrumpoker_flutter/modules/core/protocols/adapters/cache.dart';
-import 'package:scrumpoker_flutter/modules/core/protocols/repository/room_repository.dart';
+import 'package:scrumpoker_flutter/modules/core/protocols/services/room_service.dart';
 
 class CoreReduce extends Reducer {
   final Cache prefs;
-  final RoomRepository roomRepository;
+  final RoomService roomService;
   late CardEntity? lastSelectedCardState;
 
-  CoreReduce({required this.prefs, required this.roomRepository}) {
+  CoreReduce({required this.prefs, required this.roomService}) {
     _initialize();
     on(() => [joinRoomAction], _joinRoom);
     on(() => [changeSchema], _changeSchema);
@@ -46,8 +46,8 @@ class CoreReduce extends Reducer {
     selectCard.value = null;
 
     if (joinRoomAction.value != null) {
-      roomRepository.connect();
-      RoomEntity room = roomRepository.emitJoinRoom(joinRoomAction.value!);
+      roomService.connect();
+      RoomEntity room = roomService.emitJoinRoom(joinRoomAction.value!);
       roomState.value = room;
     }
   }
@@ -63,7 +63,7 @@ class CoreReduce extends Reducer {
       clearAllAction();
       prefs.setString('deckOfCards', changeDeckOfCardsAction.value.label);
       deckOfCardsState.value = changeDeckOfCardsAction.value;
-      roomRepository.emitChangeDeckOfCards(deckOfCardsState.value.label);
+      roomService.emitChangeDeckOfCards(deckOfCardsState.value.label);
     }
   }
 
@@ -104,7 +104,7 @@ class CoreReduce extends Reducer {
   }
 
   _updateUserVote(String? vote, bool isVoted) {
-    roomRepository.emitVote(vote);
+    roomService.emitVote(vote);
     roomState.value = roomState.value.copyWith(
       users: roomState.value.users.map((e) {
         if (e.id == roomState.value.myUser.id) {
@@ -144,7 +144,7 @@ class CoreReduce extends Reducer {
   }
 
   void _clearAll() {
-    roomRepository.emitClear();
+    roomService.emitClear();
     _clear();
   }
 
@@ -202,10 +202,10 @@ class CoreReduce extends Reducer {
       myUser: roomState.value.myUser.copyWith(isSpectator: isSpectator),
     );
     selectCard.value = null;
-    roomRepository.emitIsSpectator();
+    roomService.emitIsSpectator();
   }
 
   void _showVotes() {
-    roomRepository.emitShowVotes();
+    roomService.emitShowVotes();
   }
 }

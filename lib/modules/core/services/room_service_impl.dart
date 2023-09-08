@@ -1,11 +1,11 @@
 import 'package:scrumpoker_flutter/modules/core/entities/room_entity.dart';
 import 'package:scrumpoker_flutter/modules/core/protocols/adapters/i_socket.dart';
-import 'package:scrumpoker_flutter/modules/core/protocols/repository/room_repository.dart';
+import 'package:scrumpoker_flutter/modules/core/protocols/services/room_service.dart';
 
-class RoomRepositoryImpl implements RoomRepository {
+class RoomServiceImpl implements RoomService {
   final ISocket _socket;
 
-  RoomRepositoryImpl(this._socket);
+  RoomServiceImpl(this._socket);
 
   @override
   RoomEntity emitJoinRoom(String roomId) {
