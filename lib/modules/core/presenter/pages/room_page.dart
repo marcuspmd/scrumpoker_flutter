@@ -60,17 +60,16 @@ class RoomPage extends StatelessWidget {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: GridView.builder(
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: width > 700 ? 12 : 6,
-                            childAspectRatio: 0.7,
-                          ),
+                        child: GridView.count(
                           shrinkWrap: true,
-                          itemCount: deck.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return DeckCardComponent(card: deck[index]);
-                          },
+                          crossAxisCount: width > 700 ? 12 : 6,
+                          childAspectRatio: 0.7,
+                          children: deck
+                              .map((e) => DeckCardComponent(
+                                  key: Key(
+                                      'DeckCardComponentCount:${e.label}:${darkModeState.value.toString()}:${selectedCardState.value.toString()}'),
+                                  card: e))
+                              .toList(),
                         ),
                       ),
                       const Divider(
@@ -90,20 +89,18 @@ class RoomPage extends StatelessWidget {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: GridView.builder(
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: width > 700 ? 12 : 6,
-                            childAspectRatio: 0.7,
-                          ),
+                        child: GridView.count(
+                          crossAxisCount: width > 700 ? 12 : 6,
                           shrinkWrap: true,
-                          itemCount: users.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return VoteCardComponent(
-                              card: users[index],
-                              deck: deck,
-                            );
-                          },
+                          childAspectRatio: 0.7,
+                          children: users
+                              .map((e) => VoteCardComponent(
+                                    key: Key(
+                                        'VoteCardComponent:${e.id.toString()}'),
+                                    card: e,
+                                    deck: deck,
+                                  ))
+                              .toList(),
                         ),
                       ),
                       roomState.value.average != null

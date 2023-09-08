@@ -12,6 +12,8 @@ class DeckCardComponent extends StatelessWidget {
   Widget build(BuildContext context) {
     context.select(() => [selectedCardState.value]);
     return Card(
+      key: Key(
+          'DeckCard:${card.label}:${darkModeState.value.toString()}:${selectedCardState.value.toString()}'),
       shape: BeveledRectangleBorder(
         borderRadius: BorderRadius.circular(10),
         side: BorderSide(
